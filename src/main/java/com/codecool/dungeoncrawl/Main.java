@@ -8,12 +8,14 @@ import com.codecool.dungeoncrawl.logic.items.Item;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
@@ -40,8 +42,8 @@ public class Main extends Application {
     Label armour = new Label();
     Label score = new Label();
     Button pickUp = new Button("Pick Up");
-
-
+    TextField name = new TextField("Enter player name");
+    Button save = new Button("Save");
 
     public static void main(String[] args) {
         launch(args);
@@ -54,20 +56,20 @@ public class Main extends Application {
         MapLoader.updatePlayerOpponents(player);
 
         GridPane ui = new GridPane();
-        ui.setPrefWidth(200);
+        ui.setPrefWidth(250);
         ui.setPadding(new Insets(10));
-        ui.add(new Label("Health: "), 0, 0);
-        ui.add(healthLabel, 1, 0);
-        ui.add(new Label("Armour"), 0, 1);
-        ui.add(armour, 1, 1);
-        ui.add(new Label("Score: "), 0, 2);
-        ui.add(score, 1, 2);
-        ui.add(new Label("Keys: "), 0, 3);
-        ui.add(keyLabel, 1, 3);
-        ui.add(new Label("Blades: "), 0, 4);
-        ui.add(bladesLabel, 1, 4);
+        ui.add(new Label("Health: "), 0, 1);
+        ui.add(healthLabel, 1, 1);
+        ui.add(new Label("Armour"), 0, 2);
+        ui.add(armour, 1, 2);
+        ui.add(new Label("Score: "), 0, 3);
+        ui.add(score, 1, 3);
+        ui.add(new Label("Keys: "), 0, 4);
+        ui.add(keyLabel, 1, 4);
+        ui.add(new Label("Blades: "), 0, 5);
+        ui.add(bladesLabel, 1, 5);
         pickUp.setFocusTraversable(false);
-        ui.add(pickUp, 0, 5);
+        ui.add(pickUp, 0, 6);
 
 
         BorderPane borderPane = new BorderPane();
@@ -79,9 +81,28 @@ public class Main extends Application {
         scene.setOnKeyPressed(this::onKeyPressed);
         pickUp.setOnAction(this::handlePickUp);
 
+        if(player.getPlayerName()==null) {
+            ui.add(name, 0, 0);
+            ui.add(save, 1, 0);
+            EventHandler<ActionEvent> event = new EventHandler<ActionEvent>() {
+                public void handle(ActionEvent e) {
+                    player.setPlayerName(name.getText());
+                    ui.getChildren().remove(name);
+                    ui.getChildren().remove(save);
+                    ui.add(new Label("Player name: "),0,0);
+                    ui.add(new Label(player.getPlayerName()),1,0);
+                }
+            };
+            save.setOnAction(event);
+        }else{
+            ui.add(new Label("Player name: "),0,0);
+            ui.add(new Label(player.getPlayerName()),1,0);
+        }
+
         primaryStage.setTitle("Dungeon Crawl");
         primaryStage.show();
     }
+
 
     private void handlePickUp(ActionEvent actionEvent) {
         Item pickedItem = map.getPlayer().getCell().getItem();
@@ -131,6 +152,7 @@ public class Main extends Application {
             Platform.exit();
         }
 
+//       ruch określonych rpzeciwników
         Opponents.warriorMove();
         Opponents.phantomMove();
 
@@ -162,7 +184,6 @@ public class Main extends Application {
         bladesLabel.setText("" + player.getInventory().getBlades());
         score.setText("" + player.getScore());
         armour.setText("" + player.getArmor());
-
     }
 
     private int getStartPosition(int playerPosition){

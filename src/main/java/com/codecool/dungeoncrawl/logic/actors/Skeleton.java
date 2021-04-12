@@ -4,7 +4,6 @@ import com.codecool.dungeoncrawl.logic.cells.Cell;
 
 public class Skeleton extends Actor {
 
-
     public Skeleton(Cell cell) {
 
         super(cell,9, 2, 10);

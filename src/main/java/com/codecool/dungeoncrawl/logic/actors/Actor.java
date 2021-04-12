@@ -11,8 +11,6 @@ public abstract class Actor implements Drawable {
     private int points;
     private Movement movement;
 
-
-
     public Actor(Cell cell, int health, int strength, int points) {
         this.cell = cell;
         this.cell.setActor(this);

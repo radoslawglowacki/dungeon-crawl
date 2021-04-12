@@ -12,7 +12,6 @@ public class Player extends Actor {
     private String playerName;
     private String mapNumber = "1";
 
-
     public Player(Cell cell) {
         super(cell, 10, 5, 0);
         this.inventory = new Inventory(this);
@@ -56,8 +55,6 @@ public class Player extends Actor {
     public String getMapNumber() { return mapNumber; }
 
     public void setMapNumber(String mapNumber) { this.mapNumber = mapNumber; }
-
-    public Opponents getOpponents() { return opponents; }
 
     public void setOpponents(Opponents opponents) { this.opponents = opponents; }
 }

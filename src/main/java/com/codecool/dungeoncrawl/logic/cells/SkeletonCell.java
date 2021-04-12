@@ -1,6 +1,5 @@
 package com.codecool.dungeoncrawl.logic.cells;
 
-
 import com.codecool.dungeoncrawl.logic.GameMap;
 import com.codecool.dungeoncrawl.logic.actors.Actor;
 import com.codecool.dungeoncrawl.logic.actors.Skeleton;
@@ -15,7 +14,6 @@ public class SkeletonCell extends Cell {
     @Override
     public void setActor(Actor actor) {
         super.setActor(actor);
-
 
     }
 

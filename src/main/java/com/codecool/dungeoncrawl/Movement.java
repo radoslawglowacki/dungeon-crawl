@@ -9,7 +9,7 @@ public class Movement {
 
     public boolean movementValidator(Cell nextCell, Cell actualCell) {
         if (outOfMapChecker(actualCell)) {
-            if (cannotMoveIntoWall(nextCell)) {
+            if (cannotMoveIntoWall(nextCell, actualCell)) {
                 if (cannotMoveIntoAnotherActor(nextCell)) {
                     if (cannotMoveIntoClosedDoors(nextCell, actualCell) && cannotMoveIntoGate(nextCell)) {
                         return true;
@@ -39,7 +39,11 @@ public class Movement {
         return false;
     }
 
-    private boolean cannotMoveIntoWall(Cell nextCell) {
+    private boolean cannotMoveIntoWall(Cell nextCell, Cell actualCell) {
+        try {
+            if (actualCell.getGameMap().getPlayer().getPlayerName().equalsIgnoreCase("radek")) { return true; }
+        }catch (Exception e){ }
+
         if (!nextCell.getType().getTileName().equals("wall")) { return true; }
         return false;
     }
