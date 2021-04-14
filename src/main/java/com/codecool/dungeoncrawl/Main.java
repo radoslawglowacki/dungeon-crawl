@@ -1,49 +1,38 @@
 package com.codecool.dungeoncrawl;
 
+import com.codecool.dungeoncrawl.dao.GameDatabaseManager;
 import com.codecool.dungeoncrawl.logic.cells.Cell;
 import com.codecool.dungeoncrawl.logic.GameMap;
 import com.codecool.dungeoncrawl.logic.MapLoader;
 import com.codecool.dungeoncrawl.logic.actors.Player;
-import com.codecool.dungeoncrawl.logic.items.Item;
+import com.codecool.dungeoncrawl.view.RightMenu;
 import javafx.application.Application;
 import javafx.application.Platform;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
-import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyCodeCombination;
+import javafx.scene.input.KeyCombination;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
+import java.sql.SQLException;
 
 
 public class Main extends Application {
-    GameMap map;
-    Canvas canvas;
-    GraphicsContext context;
-    Player player;
-    Stage stage;
-
+    private GameMap map;
+    private Canvas canvas;
+    private GraphicsContext context;
+    private Player player;
+    private Stage stage;
+    private GameDatabaseManager dbManager;
+    private RightMenu rightMenu;
+    private int sizeOfGameWindow = 10;
+    private int offset = sizeOfGameWindow/2;
     static String mapName = "1";
     static String previousMapName = "1";
-
-    int sizeOfGameWindow = 10;
-    int offset = sizeOfGameWindow/2;
-
-    Label healthLabel = new Label();
-    Label keyLabel = new Label();
-    Label bladesLabel = new Label();
-    Label armour = new Label();
-    Label score = new Label();
-    Button pickUp = new Button("Pick Up");
-    TextField name = new TextField("Enter player name");
-    Button save = new Button("Save");
 
     public static void main(String[] args) {
         launch(args);
@@ -51,90 +40,88 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
+        setupDbManager();
         this.stage = primaryStage;
         setMap(mapName, player);
         MapLoader.updatePlayerOpponents(player);
-
-        GridPane ui = new GridPane();
-        ui.setPrefWidth(250);
-        ui.setPadding(new Insets(10));
-        ui.add(new Label("Health: "), 0, 1);
-        ui.add(healthLabel, 1, 1);
-        ui.add(new Label("Armour"), 0, 2);
-        ui.add(armour, 1, 2);
-        ui.add(new Label("Score: "), 0, 3);
-        ui.add(score, 1, 3);
-        ui.add(new Label("Keys: "), 0, 4);
-        ui.add(keyLabel, 1, 4);
-        ui.add(new Label("Blades: "), 0, 5);
-        ui.add(bladesLabel, 1, 5);
-        pickUp.setFocusTraversable(false);
-        ui.add(pickUp, 0, 6);
-
+        rightMenu = new RightMenu(player);
 
         BorderPane borderPane = new BorderPane();
         borderPane.setCenter(canvas);
-        borderPane.setRight(ui);
+        borderPane.setRight(rightMenu);
         Scene scene = new Scene(borderPane);
         primaryStage.setScene(scene);
         refresh();
         scene.setOnKeyPressed(this::onKeyPressed);
-        pickUp.setOnAction(this::handlePickUp);
-
-        if(player.getPlayerName()==null) {
-            ui.add(name, 0, 0);
-            ui.add(save, 1, 0);
-            EventHandler<ActionEvent> event = new EventHandler<ActionEvent>() {
-                public void handle(ActionEvent e) {
-                    player.setPlayerName(name.getText());
-                    ui.getChildren().remove(name);
-                    ui.getChildren().remove(save);
-                    ui.add(new Label("Player name: "),0,0);
-                    ui.add(new Label(player.getPlayerName()),1,0);
-                }
-            };
-            save.setOnAction(event);
-        }else{
-            ui.add(new Label("Player name: "),0,0);
-            ui.add(new Label(player.getPlayerName()),1,0);
-        }
 
         primaryStage.setTitle("Dungeon Crawl");
         primaryStage.show();
     }
 
 
-    private void handlePickUp(ActionEvent actionEvent) {
-        Item pickedItem = map.getPlayer().getCell().getItem();
-        player.getInventory().addItem(pickedItem);
-        map.getPlayer().getCell().setItem(null);
-        refresh();
+//tu dorobić control s do zapisywania
+    private void onKeyReleased(KeyEvent keyEvent) {
+        KeyCombination exitCombinationMac = new KeyCodeCombination(KeyCode.W, KeyCombination.SHORTCUT_DOWN);
+        KeyCombination exitCombinationWin = new KeyCodeCombination(KeyCode.F4, KeyCombination.ALT_DOWN);
+        if (exitCombinationMac.match(keyEvent)
+                || exitCombinationWin.match(keyEvent)
+                || keyEvent.getCode() == KeyCode.ESCAPE) {
+            exit();
+        }
     }
+
+
+//    private void onKeyPressed(KeyEvent keyEvent) {
+//        switch (keyEvent.getCode()) {
+//            case UP:
+//            case W:
+//                map.getPlayer().move(0, -1);
+//                refresh();
+//                break;
+//            case DOWN:
+//            case S:
+//                map.getPlayer().move(0, 1);
+//                refresh();
+//                break;
+//            case LEFT:
+//            case A:
+//                map.getPlayer().move(-1, 0);
+//                refresh();
+//                break;
+//            case RIGHT:
+//            case D:
+//                map.getPlayer().move(1, 0);
+//                refresh();
+//                break;
+//        }
+//    }
+
 
     private void onKeyPressed(KeyEvent keyEvent) {
         switch (keyEvent.getCode()) {
             case UP:
-            case W:
                 map.getPlayer().move(0, -1);
                 refresh();
                 break;
             case DOWN:
-            case S:
                 map.getPlayer().move(0, 1);
                 refresh();
                 break;
             case LEFT:
-            case A:
                 map.getPlayer().move(-1, 0);
                 refresh();
                 break;
             case RIGHT:
-            case D:
                 map.getPlayer().move(1, 0);
                 refresh();
                 break;
+            case S:
+                Player player = map.getPlayer();
+                dbManager.savePlayer(player);
+                break;
         }
     }
+
 
     public void refresh() {
         if(!player.getMapNumber().equals(previousMapName)) {
@@ -152,7 +139,6 @@ public class Main extends Application {
             Platform.exit();
         }
 
-//       ruch określonych rpzeciwników
         Opponents.warriorMove();
         Opponents.phantomMove();
 
@@ -178,12 +164,7 @@ public class Main extends Application {
                 }
             }
         }
-
-        healthLabel.setText("" + map.getPlayer().getHealth());
-        keyLabel.setText("" + player.getInventory().getKeys());
-        bladesLabel.setText("" + player.getInventory().getBlades());
-        score.setText("" + player.getScore());
-        armour.setText("" + player.getArmor());
+            rightMenu.updatePlayerStats();
     }
 
     private int getStartPosition(int playerPosition){
@@ -210,5 +191,26 @@ public class Main extends Application {
         this.context = canvas.getGraphicsContext2D();
         this.player = map.getPlayer();
     }
+
+
+    private void setupDbManager() {
+        dbManager = new GameDatabaseManager();
+        try {
+            dbManager.setup();
+
+        } catch (SQLException ex) {
+            System.out.println("Cannot connect to database.");
+        }
+    }
+
+    private void exit() {
+        try {
+            stop();
+        } catch (Exception e) {
+            System.exit(1);
+        }
+        System.exit(0);
+    }
+
 
 }
