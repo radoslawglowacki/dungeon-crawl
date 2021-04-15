@@ -6,9 +6,9 @@ import com.codecool.dungeoncrawl.logic.actors.Skeleton;
 
 public class SkeletonCell extends Cell {
 
-    public SkeletonCell(GameMap gameMap, int x, int y, CellType type) {
+    public SkeletonCell(GameMap gameMap, int x, int y, CellType type, String mapNumber) {
         super(gameMap, x, y, type);
-        new Skeleton(this);
+        new Skeleton(this, x,y, mapNumber);
     }
 
     @Override

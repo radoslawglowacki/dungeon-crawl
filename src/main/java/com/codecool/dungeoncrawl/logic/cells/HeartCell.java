@@ -9,9 +9,9 @@ import com.codecool.dungeoncrawl.logic.items.Item;
 
 public class HeartCell extends Cell {
 
-    public HeartCell(GameMap gameMap, int x, int y, CellType type) {
+    public HeartCell(GameMap gameMap, int x, int y, CellType type, String mapNumber) {
         super(gameMap, x, y, type);
-        new Heart(this);
+        new Heart(this, mapNumber);
     }
 
     @Override

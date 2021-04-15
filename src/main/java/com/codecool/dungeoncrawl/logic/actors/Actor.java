@@ -10,15 +10,18 @@ public abstract class Actor implements Drawable {
     private int strength;
     private int points;
     private Movement movement;
+    private String mapNumber;
+    private int startX;
+    private int startY;
 
-    public Actor(Cell cell, int health, int strength, int points) {
+    public Actor(Cell cell, int health, int strength, int points, String mapNumber) {
         this.cell = cell;
         this.cell.setActor(this);
         this.movement = new Movement();
         this.health = health;
         this.strength = strength;
         this.points = points;
-
+        this.mapNumber = mapNumber;
     }
 
     public void move(int dx, int dy) {
@@ -38,6 +41,8 @@ public abstract class Actor implements Drawable {
         cell = nextCell;
     }
 
+    public void setStrength(int strength) { this.strength += strength; }
+
     public int getStrength() { return strength; }
 
     public int getHealth() { return health; }
@@ -53,4 +58,16 @@ public abstract class Actor implements Drawable {
     public int getX() { return cell.getX(); }
 
     public int getY() { return cell.getY(); }
+
+    public String getMapNumber() { return mapNumber; }
+
+    public void setMapNumber(String mapNumber) { this.mapNumber = mapNumber; }
+
+    public int getStartX() { return startX; }
+
+    public void setStartX(int startX) { this.startX = startX; }
+
+    public int getStartY() { return startY; }
+
+    public void setStartY(int startY) { this.startY = startY; }
 }

@@ -3,13 +3,12 @@ package com.codecool.dungeoncrawl.logic.actors;
 import com.codecool.dungeoncrawl.logic.cells.Cell;
 
 public class Phantom extends Actor {
-    private final int startX;
-    private final int startY;
 
-    public Phantom(Cell cell, int startX, int startY) {
-        super(cell,30, 10, 30);
-        this.startX = startX;
-        this.startY = startY;
+
+    public Phantom(Cell cell, int startX, int startY, String mapNumber) {
+        super(cell,30, 10, 30, mapNumber);
+        this.setStartX(startX);
+        this.setStartY(startY);
     }
 
     @Override
@@ -17,12 +16,4 @@ public class Phantom extends Actor {
         return "phantom";
     }
 
-
-    public int getStartX() {
-        return startX;
-    }
-
-    public int getStartY() {
-        return startY;
-    }
 }

@@ -10,56 +10,44 @@ import java.util.ArrayList;
 public class Inventory {
 
 
-private ArrayList<Item> items;
-private final Player player;
+    private ArrayList<Item> items;
+    private ArrayList<Item> keys;
+    private final Player player;
 
     public Inventory(Player player) {
-        this.items  = new ArrayList<>();
+        this.items = new ArrayList<>();
+        this.keys = new ArrayList<>();
         this.player = player;
     }
 
 
-private void updateInventory(Player player, Item item){
+    private void updateInventory(Player player, Item item) {
         player.updateScore(item.getScore());
         player.updateHealth(item.getHealth());
         player.updateArmor(item.getArmor());
-}
-
-public void addItem(Item item){
-    if(item != null) {
-        this.items.add(item);
-        updateInventory(player, item);
-        item.getCell().setType(CellType.FLOOR);
     }
-}
 
-    public int getKeys() {
-        int count = 0;
-        for (Item item:items) {
+    public void addItem(Item item) {
+        if (item != null) {
+            this.items.add(item);
             if(item.getTileName().equals("key")){
-                count++;
+                keys.add(item);
+            } else if(item.getTileName().equals("blade")){
+                player.setStrength(5);
             }
+            System.out.println(item.getTileName());
+            updateInventory(player, item);
+            item.getCell().setType(CellType.FLOOR);
         }
-        return count;
     }
 
-    public int getBlades() {
-        int count = 0;
-        for (Item item:items) {
-            if(item.getTileName().equals("blade")){
-                count++;
-            }
-        }
-        return count;
+    public ArrayList<Item> getItems() { return items; }
+
+    public int getItemsCount() {
+        return items.size();
     }
 
-    public void setKeys() {
-        for (Item item: items) {
-            if(items.size()>0) {
-                if (item.getTileName().equals("key")) {
-                    items.remove(item);
-                }
-            }
-        }
-    }
+    public int getKeys() { return keys.size(); }
+
+    public void removeOneKey() { if(keys.size() > 0) { keys.remove(keys.get(0)); } }
 }

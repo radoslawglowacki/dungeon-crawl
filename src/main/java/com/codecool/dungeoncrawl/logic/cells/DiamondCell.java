@@ -8,9 +8,9 @@ import com.codecool.dungeoncrawl.logic.items.Item;
 
 public class DiamondCell extends Cell {
 
-    public DiamondCell(GameMap gameMap, int x, int y, CellType type) {
+    public DiamondCell(GameMap gameMap, int x, int y, CellType type, String mapNumber) {
         super(gameMap, x, y, type);
-        new Diamond(this);
+        new Diamond(this, mapNumber);
     }
 
 

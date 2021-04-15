@@ -15,7 +15,7 @@ public class RightMenu extends GridPane {
     private final Player player;
     private Label healthLabel;
     private Label keyLabel;
-    private Label bladesLabel;
+    private Label strengthLabel;
     private Label armour;
     private Label score;
     private Button pickUp;
@@ -68,10 +68,10 @@ public class RightMenu extends GridPane {
     }
 
     private void bladesStatus(){
-        this.bladesLabel =  new Label();
+        this.strengthLabel =  new Label();
 
-        add(new Label("Blades: "), 0, 5);
-        add(bladesLabel, 1, 5);
+        add(new Label("Strength: "), 0, 5);
+        add(strengthLabel, 1, 5);
     }
 
     private void pickUpButton(){
@@ -106,17 +106,19 @@ public class RightMenu extends GridPane {
     }
 
     private void handlePickUp(ActionEvent actionEvent) {
-        Item pickedItem = player.getCell().getItem();
-        player.getInventory().addItem(pickedItem);
-        player.getCell().setItem(null);
-        pickedItem.getCell().setType(CellType.FLOOR);
-        updatePlayerStats();
+        if(player.getCell().getItem() != null) {
+            Item pickedItem = player.getCell().getItem();
+            player.getInventory().addItem(pickedItem);
+            player.getCell().setItem(null);
+            pickedItem.getCell().setType(CellType.FLOOR);
+            updatePlayerStats();
+        }
     }
 
     public void updatePlayerStats(){
         healthLabel.setText("" + player.getHealth());
         keyLabel.setText("" + player.getInventory().getKeys());
-        bladesLabel.setText("" + player.getInventory().getBlades());
+        strengthLabel.setText("" + player.getStrength());
         score.setText("" + player.getScore());
         armour.setText("" + player.getArmor());
     }

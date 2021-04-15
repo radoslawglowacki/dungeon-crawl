@@ -4,13 +4,15 @@ import com.codecool.dungeoncrawl.logic.cells.Cell;
 
 public class Skeleton extends Actor {
 
-    public Skeleton(Cell cell) {
-
-        super(cell,9, 2, 10);
+    public Skeleton(Cell cell, int startX, int startY, String mapNumber) {
+        super(cell,9, 2, 10, mapNumber);
+        this.setStartX(startX);
+        this.setStartY(startY);
     }
 
     @Override
     public String getTileName() {
         return "skeleton";
     }
+
 }

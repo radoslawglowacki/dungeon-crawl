@@ -3,6 +3,7 @@ package com.codecool.dungeoncrawl;
 import com.codecool.dungeoncrawl.logic.cells.Cell;
 import com.codecool.dungeoncrawl.logic.actors.Actor;
 import com.codecool.dungeoncrawl.logic.cells.CellType;
+import com.codecool.dungeoncrawl.logic.items.OpenedDoors;
 
 
 public class Movement {
@@ -53,8 +54,9 @@ public class Movement {
         else {
             Inventory inventory = actualCell.getGameMap().getPlayer().getInventory();
             if (inventory.getKeys() > 0) {
+                inventory.addItem(new OpenedDoors(nextCell, actualCell.getGameMap().getPlayer().getMapNumber()));
                 nextCell.setType(CellType.OPEN_DOORS);
-                inventory.setKeys();
+                inventory.removeOneKey();
                 return true;
             }
         }

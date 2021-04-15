@@ -5,9 +5,9 @@ import com.codecool.dungeoncrawl.logic.items.Key;
 
 public class KeyCell extends Cell {
 
-    public KeyCell(GameMap gameMap, int x, int y, CellType type) {
+    public KeyCell(GameMap gameMap, int x, int y, CellType type, String mapName) {
         super(gameMap, x, y, type);
-        new Key(this);
+        new Key(this, mapName);
     }
 
 

@@ -4,8 +4,8 @@ import com.codecool.dungeoncrawl.logic.cells.Cell;
 
 public class Heart extends Item{
 
-    public Heart(Cell cell) {
-        super(cell,20,30,0);
+    public Heart(Cell cell, String mapName) {
+        super(cell,20,30,0, mapName);
     }
 
     @Override

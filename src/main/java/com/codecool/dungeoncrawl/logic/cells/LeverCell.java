@@ -3,6 +3,7 @@ package com.codecool.dungeoncrawl.logic.cells;
 import com.codecool.dungeoncrawl.logic.GameMap;
 import com.codecool.dungeoncrawl.logic.actors.Actor;
 import com.codecool.dungeoncrawl.logic.actors.Player;
+import com.codecool.dungeoncrawl.logic.items.OpenedDoors;
 
 public class LeverCell extends Cell {
 
@@ -14,14 +15,15 @@ public class LeverCell extends Cell {
     public void setActor(Actor actor) {
         super.setActor(actor);
 
-        if(actor instanceof Player){
+        if(actor instanceof Player) {
             Cell[][] mapCells = actor.getCell().getGameMap().getCells();
             int mapWidth = actor.getCell().getGameMap().getWidth();
             int mapHeight = actor.getCell().getGameMap().getHeight();
 
-            for(int x=0; x< mapWidth; x++){
-                for(int y=0; y< mapHeight; y++){
-                    if(mapCells[x][y].getType() == CellType.GATE){
+            for (int x = 0; x < mapWidth; x++) {
+                for (int y = 0; y < mapHeight; y++) {
+                    if (mapCells[x][y].getType() == CellType.GATE) {
+                        ((Player) actor).getInventory().addItem(new OpenedDoors(mapCells[x][y], ((Player) actor).getMapNumber()));
                         mapCells[x][y].setType(CellType.OPEN_DOORS);
                     }
                 }

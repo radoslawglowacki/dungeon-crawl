@@ -3,12 +3,13 @@ package com.codecool.dungeoncrawl.logic.actors;
 import com.codecool.dungeoncrawl.logic.cells.Cell;
 
 public class Warrior extends Actor {
+    private int direction;
 
-    private int dx;
-
-    public Warrior(Cell cell) {
-        super(cell,15, 5, 20);
-        this.dx = 1;
+    public Warrior(Cell cell, int startX, int startY, String mapNumber) {
+        super(cell,15, 5, 20, mapNumber);
+        this.direction = 1;
+        this.setStartX(startX);
+        this.setStartY(startY);
     }
 
     @Override
@@ -16,11 +17,12 @@ public class Warrior extends Actor {
         return "warrior";
     }
 
-    public int getDx() {
-        return dx;
+    public int getDirection() {
+        return direction;
     }
 
-    public void setDx(int dx) {
-        this.dx *= -dx;
+    public void changeDirection() {
+        this.direction *= -1;
     }
+
 }

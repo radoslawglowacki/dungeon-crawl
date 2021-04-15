@@ -8,14 +8,15 @@ public abstract class Item implements Drawable{
     private int score;
     private int health;
     private int armor;
+    private String mapName;
 
-
-    public Item(Cell cell, int score, int health, int armor){
+    public Item(Cell cell, int score, int health, int armor, String mapName){
         this.cell = cell;
         this.cell.setItem(this);
         this.score = score;
         this.health = health;
         this.armor = armor;
+        this.mapName = mapName;
     }
 
 
@@ -35,4 +36,6 @@ public abstract class Item implements Drawable{
     public int getHealth() { return health; }
 
     public int getArmor() { return armor; }
+
+    public String getMapName() { return mapName; }
 }

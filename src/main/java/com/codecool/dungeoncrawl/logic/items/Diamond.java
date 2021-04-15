@@ -4,8 +4,8 @@ import com.codecool.dungeoncrawl.logic.cells.Cell;
 
 public class Diamond extends Item{
 
-    public Diamond(Cell cell) {
-        super(cell, 50,0,0);
+    public Diamond(Cell cell, String mapName) {
+        super(cell, 50,0,0, mapName);
     }
 
     @Override

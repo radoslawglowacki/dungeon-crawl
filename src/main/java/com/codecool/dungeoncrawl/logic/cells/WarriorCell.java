@@ -7,9 +7,9 @@ import com.codecool.dungeoncrawl.logic.actors.Warrior;
 
 public class WarriorCell extends Cell {
 
-    public WarriorCell(GameMap gameMap, int x, int y, CellType type) {
+    public WarriorCell(GameMap gameMap, int x, int y, CellType type, String mapNumber) {
         super(gameMap, x, y, type);
-        new Warrior(this);
+        new Warrior(this,x,y, mapNumber);
     }
 
     @Override

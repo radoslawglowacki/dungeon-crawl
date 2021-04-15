@@ -8,127 +8,81 @@ import java.util.ArrayList;
 import java.util.Random;
 
 public class Opponents {
-
-    private static ArrayList<Actor> diedOpponents;
-    private ArrayList<Skeleton> skeletons;
-    private static ArrayList<Warrior> warriors;
-    private static ArrayList<Phantom> phantoms;
-
+    private static ArrayList<Actor> diedOpponents = new ArrayList<>();
+    private static ArrayList actualOpponents;
 
 
     public Opponents(ArrayList arrayList){
-        this.skeletons = (ArrayList<Skeleton>) arrayList.get(0);
-        this.warriors = (ArrayList<Warrior>) arrayList.get(1);
-        this.phantoms = (ArrayList<Phantom>) arrayList.get(2);
-        this.diedOpponents = new ArrayList<>();
+        actualOpponents = arrayList;
     }
 
 
-
-    public static void warriorMove(){
-        for (Warrior warrior: warriors) {
-            if(warrior.getHealth()>0){
-                int dx = warrior.getDx();
-                if (warrior.getCell().getNeighbor(dx,0).getType().equals(CellType.WALL)){ warrior.setDx(1); }
-                dx = warrior.getDx();
-                warrior.move(dx, 0);
+    public static void opponentsMove(){
+        for (Object actor: actualOpponents) {
+            if(actor instanceof Warrior){
+                warriorMove((Warrior) actor);
+            }else if(actor instanceof Phantom){
+                phantomMove((Phantom) actor);
             }
         }
     }
 
-    public static void phantomMove(){
+    public static void warriorMove(Warrior warrior){
+        if(warrior.getHealth()>0){
+            int dx = warrior.getDirection();
+            if (warrior.getCell().getNeighbor(dx,0).getType().equals(CellType.WALL)){ warrior.changeDirection(); }
+            dx = warrior.getDirection();
+            warrior.move(dx, 0);
+        }
+    }
 
+    public static void phantomMove(Phantom phantom){
         Random random = new Random();
-        for (Phantom phantom: phantoms) {
-            int chance = random.nextInt(4); //random chance to move
-            if(chance == 1) {
-                int dx = -2 + random.nextInt(5);
-                int dy = -2 + random.nextInt(5);
-                int startX = phantom.getStartX();
-                int startY = phantom.getStartY();
-                if(phantom.getHealth()>0) {
-                    phantom.setPosition(startX, startY);
-                    phantom.move(dx, dy);
-                }
+        int chance = random.nextInt(4);
+
+        if(chance == 1) {
+            int dx = -2 + random.nextInt(5);
+            int dy = -2 + random.nextInt(5);
+            int startX = phantom.getStartX();
+            int startY = phantom.getStartY();
+            if(phantom.getHealth()>0) {
+                phantom.setPosition(startX, startY);
+                phantom.move(dx, dy);
             }
-
         }
-
     }
 
-//jak sie zdecyduje zeby potwory same tez atakowaly to trzeba przerobic
     public static void fightWithOpponent(Cell opponnent, Cell player){
-        Actor opponentActor = opponnent.getActor();
         Player playerActor = player.getGameMap().getPlayer();
-        int opponentHealth = opponentActor.getHealth();
-        int playerHealth = playerActor.getHealth();
-        int opponentStrength = opponentActor.getStrength();
-        int playerStrength = playerActor.getStrength();
-        int pointsForWin = opponentActor.getPoints();
-        int playerArmor = player.getGameMap().getPlayer().getArmor();
-        Inventory inventory = player.getGameMap().getPlayer().getInventory();
+        Actor opponentActor = opponnent.getActor();
 
+        opponentActor.updateHealth(-playerActor.getStrength());
 
-        if (inventory.getBlades() != 0) {
-            playerStrength += 5 * inventory.getBlades();
-        }
-
-        opponentActor.updateHealth(-playerStrength);
-        opponentHealth = opponentActor.getHealth();
-
-        if (opponentHealth > 0) {
-            if (playerHealth > 1) {
-                if (playerArmor > 0) {
-                    playerActor.updateArmor(-opponentStrength);
+        if (opponentActor.getHealth() > 0) {
+            if (playerActor.getHealth() > 1) {
+                if (playerActor.getArmor() > 0) {
+                    playerActor.updateArmor(-opponentActor.getStrength());
                 } else {
-                    playerActor.updateHealth(-opponentStrength);
+                    playerActor.updateHealth(-opponentActor.getStrength());
                 }
             }
         }
 
-        playerArmor = playerActor.getArmor();
-
-        if (playerArmor < 0) {
-            playerActor.updateArmor(-playerArmor);
-            playerActor.updateHealth(playerArmor);
+        if (playerActor.getArmor() < 0) {
+            playerActor.updateArmor(-playerActor.getArmor());
+            playerActor.updateHealth(playerActor.getArmor());
         }
 
-        if (opponentHealth <= 0) {
+        if (opponentActor.getHealth() <= 0) {
             opponnent.setActor(null);
-            playerActor.updateScore(pointsForWin);
+            playerActor.updateScore(opponentActor.getPoints());
             diedOpponents.add(opponentActor);
         }
     }
 
+    public static ArrayList<Actor> getDiedOpponents() { return diedOpponents; }
 
-//    to tylko do testów
-
-    public void printWarrior(){
-        int num= 0;
-        for (Warrior warrior:warriors) {
-            num++;
-        }
-        System.out.println("warrior");
-        System.out.println(num);
-    }
-
-    public void printSkeletons(){
-        int num= 0;
-        for (Skeleton skeleton: skeletons) {
-            num++;
-        }
-        System.out.println("skeleton");
-        System.out.println(num);
-    }
-
-    public void printPhantoms(){
-        int num= 0;
-        for (Phantom phantom: phantoms) {
-            num++;
-        }
-        System.out.println("phantom");
-        System.out.println(num);
-    }
+    public static ArrayList getActualOpponents() { return actualOpponents; }
 
     public void printDiedOpp(){
         int num= 0;

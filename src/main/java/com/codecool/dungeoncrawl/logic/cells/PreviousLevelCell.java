@@ -4,8 +4,8 @@ import com.codecool.dungeoncrawl.logic.GameMap;
 import com.codecool.dungeoncrawl.logic.actors.Actor;
 import com.codecool.dungeoncrawl.logic.actors.Player;
 
-public class NextLevelCell extends Cell{
-    public NextLevelCell(GameMap gameMap, int x, int y, CellType type) {
+public class PreviousLevelCell extends Cell{
+    public PreviousLevelCell(GameMap gameMap, int x, int y, CellType type) {
         super(gameMap, x, y, type);
     }
 
@@ -13,7 +13,7 @@ public class NextLevelCell extends Cell{
     public void setActor(Actor actor) {
         super.setActor(actor);
         if(actor instanceof Player){
-            ((Player) actor).setMapNumber("2");
+            ((Player) actor).setMapNumber("1");
         }
     }
 }

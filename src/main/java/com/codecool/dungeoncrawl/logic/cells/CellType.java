@@ -14,8 +14,10 @@ public enum CellType {
     ARMOR("armor"),
     FIRE("fire"),
     NEXT_LEVEL("nextLevel"),
+    PREVIOUS_LEVEL("previousLevel"),
     STONES("stones"),
     GATE("gate");
+
 
 
     private final String tileName;

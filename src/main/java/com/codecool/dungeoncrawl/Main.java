@@ -1,10 +1,13 @@
 package com.codecool.dungeoncrawl;
 
 import com.codecool.dungeoncrawl.dao.GameDatabaseManager;
+import com.codecool.dungeoncrawl.logic.actors.Actor;
 import com.codecool.dungeoncrawl.logic.cells.Cell;
 import com.codecool.dungeoncrawl.logic.GameMap;
 import com.codecool.dungeoncrawl.logic.MapLoader;
 import com.codecool.dungeoncrawl.logic.actors.Player;
+import com.codecool.dungeoncrawl.logic.cells.CellType;
+import com.codecool.dungeoncrawl.logic.items.Item;
 import com.codecool.dungeoncrawl.view.RightMenu;
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -18,7 +21,9 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
+
 import java.sql.SQLException;
+import java.util.ArrayList;
 
 
 public class Main extends Application {
@@ -30,7 +35,7 @@ public class Main extends Application {
     private GameDatabaseManager dbManager;
     private RightMenu rightMenu;
     private int sizeOfGameWindow = 10;
-    private int offset = sizeOfGameWindow/2;
+    private int offset = sizeOfGameWindow / 2;
     static String mapName = "1";
     static String previousMapName = "1";
 
@@ -59,7 +64,7 @@ public class Main extends Application {
     }
 
 
-//tu dorobić control s do zapisywania
+    //tu dorobić control s do zapisywania
     private void onKeyReleased(KeyEvent keyEvent) {
         KeyCombination exitCombinationMac = new KeyCodeCombination(KeyCode.W, KeyCombination.SHORTCUT_DOWN);
         KeyCombination exitCombinationWin = new KeyCodeCombination(KeyCode.F4, KeyCombination.ALT_DOWN);
@@ -71,33 +76,8 @@ public class Main extends Application {
     }
 
 
-//    private void onKeyPressed(KeyEvent keyEvent) {
-//        switch (keyEvent.getCode()) {
-//            case UP:
-//            case W:
-//                map.getPlayer().move(0, -1);
-//                refresh();
-//                break;
-//            case DOWN:
-//            case S:
-//                map.getPlayer().move(0, 1);
-//                refresh();
-//                break;
-//            case LEFT:
-//            case A:
-//                map.getPlayer().move(-1, 0);
-//                refresh();
-//                break;
-//            case RIGHT:
-//            case D:
-//                map.getPlayer().move(1, 0);
-//                refresh();
-//                break;
-//        }
-//    }
-
-
     private void onKeyPressed(KeyEvent keyEvent) {
+        Opponents.opponentsMove();
         switch (keyEvent.getCode()) {
             case UP:
                 map.getPlayer().move(0, -1);
@@ -124,7 +104,7 @@ public class Main extends Application {
 
 
     public void refresh() {
-        if(!player.getMapNumber().equals(previousMapName)) {
+        if (!player.getMapNumber().equals(previousMapName)) {
             previousMapName = mapName;
             mapName = player.getMapNumber();
 
@@ -135,12 +115,9 @@ public class Main extends Application {
             }
         }
 //        prymitywny koniec gry gdy życie gracza bedzie wynosiło 0
-        if(player.getHealth() < 1) {
+        if (player.getHealth() < 1) {
             Platform.exit();
         }
-
-        Opponents.warriorMove();
-        Opponents.phantomMove();
 
         context.setFill(Color.BLACK);
         context.fillRect(0, 0, canvas.getWidth(), canvas.getHeight());
@@ -152,44 +129,45 @@ public class Main extends Application {
         int xEnd = getEndPosition(playerX, map.getWidth());
 
         int yStart = getStartPosition(playerY);
-        int yEnd =  getEndPosition(playerY, map.getHeight());
+        int yEnd = getEndPosition(playerY, map.getHeight());
 
         for (int x = xStart; x < xEnd; x++) {
             for (int y = yStart; y < yEnd; y++) {
                 Cell cell = map.getCell(x, y);
                 if (cell.getActor() != null) {
-                    Tiles.drawTile(context, cell.getActor(), x-xStart, y-yStart);
+                    Tiles.drawTile(context, cell.getActor(), x - xStart, y - yStart);
                 } else {
-                    Tiles.drawTile(context, cell, x-xStart, y-yStart);
+                    Tiles.drawTile(context, cell, x - xStart, y - yStart);
                 }
             }
         }
-            rightMenu.updatePlayerStats();
+        rightMenu.updatePlayerStats();
     }
 
-    private int getStartPosition(int playerPosition){
-        if(playerPosition - offset < 0){
+    private int getStartPosition(int playerPosition) {
+        if (playerPosition - offset < 0) {
             return 0;
-        }else {
+        } else {
             return playerPosition - offset;
         }
     }
 
-    private int getEndPosition(int playerPosition, int mapSize){
-        if(playerPosition + offset > mapSize){
+    private int getEndPosition(int playerPosition, int mapSize) {
+        if (playerPosition + offset > mapSize) {
             return mapSize;
-        }else {
+        } else {
             return playerPosition + offset;
         }
     }
 
-    public void setMap(String mapName, Player player){
+    public void setMap(String mapName, Player player) {
         this.map = MapLoader.loadMap(mapName, player);
+        this.player = map.getPlayer();
         this.canvas = new Canvas(
                 sizeOfGameWindow * Tiles.TILE_WIDTH,
                 sizeOfGameWindow * Tiles.TILE_WIDTH);
         this.context = canvas.getGraphicsContext2D();
-        this.player = map.getPlayer();
+
     }
 
 
@@ -211,6 +189,5 @@ public class Main extends Application {
         }
         System.exit(0);
     }
-
 
 }

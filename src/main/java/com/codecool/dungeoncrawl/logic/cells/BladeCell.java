@@ -5,9 +5,9 @@ import com.codecool.dungeoncrawl.logic.items.Blade;
 
 public class BladeCell extends Cell {
 
-    public BladeCell(GameMap gameMap, int x, int y, CellType type) {
+    public BladeCell(GameMap gameMap, int x, int y, CellType type, String mapNumber) {
         super(gameMap, x, y, type);
-        new Blade(this);
+        new Blade(this, mapNumber);
     }
 
 

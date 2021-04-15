@@ -7,9 +7,9 @@ import com.codecool.dungeoncrawl.logic.actors.Skeleton;
 
 public class PhantomCell extends Cell {
 
-    public PhantomCell(GameMap gameMap, int x, int y, CellType type) {
+    public PhantomCell(GameMap gameMap, int x, int y, CellType type, String mapNumber) {
         super(gameMap, x, y, type);
-        new Phantom(this,x,y);
+        new Phantom(this,x,y, mapNumber);
     }
 
     @Override
