@@ -50,9 +50,7 @@ public class Cell implements Drawable {
     public GameMap getGameMap() { return gameMap; }
 
     @Override
-    public String getTileName() {
-        return type.getTileName();
-    }
+    public String getTileName() { return type.getTileName(); }
 
     public int getX() { return x; }
 

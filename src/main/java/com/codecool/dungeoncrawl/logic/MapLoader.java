@@ -1,7 +1,7 @@
 package com.codecool.dungeoncrawl.logic;
 
 
-import com.codecool.dungeoncrawl.Opponents;
+import com.codecool.dungeoncrawl.logic.actors.opponents.Opponents;
 import com.codecool.dungeoncrawl.logic.actors.*;
 import com.codecool.dungeoncrawl.logic.cells.*;
 import com.codecool.dungeoncrawl.logic.items.Item;
@@ -119,7 +119,7 @@ public class MapLoader {
             }
         }
         setCorrectItemsForMap(map, player);
-        setCorrectOpponentsForMap(map,player);
+        setCorrectOpponentsForMap(map, player);
         return map;
     }
 
@@ -127,8 +127,8 @@ public class MapLoader {
         player.setOpponents(new Opponents(actualOpponents));
     }
 
-    private static void setCorrectItemsForMap(GameMap map, Player player) {
-        if(player != null) {
+    public static void setCorrectItemsForMap(GameMap map, Player player) {
+        if (player != null) {
             ArrayList<Item> items = player.getInventory().getItems();
             if (items.size() > 0) {
                 for (Item item : items) {
@@ -136,7 +136,9 @@ public class MapLoader {
                         if (item.getTileName().equals("openDoors")) {
                             map.getCell(item.getX(), item.getY()).setType(CellType.OPEN_DOORS);
                         } else {
+                            map.getCell(item.getX(), item.getY()).setItem(null);
                             map.getCell(item.getX(), item.getY()).setType(CellType.FLOOR);
+
                         }
                     }
                 }
@@ -145,8 +147,8 @@ public class MapLoader {
     }
 
 
-    private static void setCorrectOpponentsForMap(GameMap map, Player player) {
-        if(player != null) {
+    public static void setCorrectOpponentsForMap(GameMap map, Player player) {
+        if (player != null) {
             ArrayList<Actor> diedOpponents = player.getDiedOpponents();
             int mapWidth = map.getWidth();
             int mapHeight = map.getHeight();
@@ -156,16 +158,18 @@ public class MapLoader {
                     Actor actorToCheck = map.getCell(x, y).getActor();
                     if (actorToCheck != null) {
                         for (Actor died : diedOpponents) {
-                            if(Objects.equals(actorToCheck.getMapNumber(), died.getMapNumber()))
-                            if(actorToCheck.getStartX() == died.getStartX() && actorToCheck.getStartY() == died.getStartY()){
-                                actorToCheck.getCell().setActor(null);
-                                actualOpponents.remove(actorToCheck);
-                            }
+                            if (Objects.equals(actorToCheck.getMapNumber(), died.getMapNumber()))
+                                if (actorToCheck.getStartX() == died.getStartX() && actorToCheck.getStartY() == died.getStartY()) {
+                                    actorToCheck.getCell().setActor(null);
+                                    actualOpponents.remove(actorToCheck);
+                                }
                         }
                     }
                 }
             }
         }
     }
+
+
 
 }

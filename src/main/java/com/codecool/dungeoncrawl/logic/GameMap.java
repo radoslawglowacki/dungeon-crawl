@@ -23,9 +23,7 @@ public class GameMap {
 
     public Cell[][] getCells() { return cells; }
 
-    public Cell getCell(int x, int y) {
-        return cells[x][y];
-    }
+    public Cell getCell(int x, int y) { return cells[x][y]; }
 
     public void setCell(int x, int y, Cell cell) {
         cells[x][y] = cell;

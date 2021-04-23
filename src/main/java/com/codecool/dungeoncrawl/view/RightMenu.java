@@ -1,5 +1,7 @@
 package com.codecool.dungeoncrawl.view;
 
+import com.codecool.dungeoncrawl.Main;
+import com.codecool.dungeoncrawl.dao.json.SerializationMenager;
 import com.codecool.dungeoncrawl.logic.actors.Player;
 import com.codecool.dungeoncrawl.logic.cells.CellType;
 import com.codecool.dungeoncrawl.logic.items.Item;
@@ -21,13 +23,18 @@ public class RightMenu extends GridPane {
     private Button pickUp;
     private TextField name;
     private Button save;
+    private int prefWidth = 270;
+    private SerializationMenager serializationMenager;
+    private Main main;
 
 
-    public RightMenu(Player player){
+    public RightMenu(Player player, SerializationMenager serializationMenager, Main main){
         super();
         this.player = player;
+        this.serializationMenager = serializationMenager;
+        this.main = main;
 
-        setPrefWidth(250);
+        setPrefWidth(prefWidth);
         setPadding(new Insets(10));
 
         healthStatus();
@@ -37,6 +44,25 @@ public class RightMenu extends GridPane {
         bladesStatus();
         pickUpButton();
         playerName();
+        serializationButtons();
+    }
+
+
+    private void serializationButtons(){
+        Button exportButton = new Button("Export");
+        Button importButton = new Button("Import");
+        Label exportOrImportGamestate = new Label("Export or import gamestate");
+
+        exportOrImportGamestate.setPrefWidth(190);
+        exportOrImportGamestate.setPadding(new Insets(30,0,20,0));
+        add(exportOrImportGamestate,0,7);
+
+        add(exportButton,0,8);
+        add(importButton,0,9);
+
+        exportButton.setOnAction(actionEvent -> serializationMenager.exportGameState());
+        importButton.setOnAction(actionEvent -> serializationMenager.importGameState(main));
+
     }
 
     private void healthStatus(){
@@ -76,7 +102,6 @@ public class RightMenu extends GridPane {
 
     private void pickUpButton(){
         this.pickUp = new Button("Pick Up");
-
         add(pickUp, 0, 6);
         pickUp.setFocusTraversable(false);
         pickUp.setOnAction(this::handlePickUp);
@@ -104,6 +129,8 @@ public class RightMenu extends GridPane {
             add(new Label(player.getPlayerName()),1,0);
         }
     }
+
+
 
     private void handlePickUp(ActionEvent actionEvent) {
         if(player.getCell().getItem() != null) {

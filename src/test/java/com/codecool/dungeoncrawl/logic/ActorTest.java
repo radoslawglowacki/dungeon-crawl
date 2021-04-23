@@ -1,7 +1,7 @@
 package com.codecool.dungeoncrawl.logic;
 
 import com.codecool.dungeoncrawl.logic.actors.Player;
-import com.codecool.dungeoncrawl.logic.actors.Skeleton;
+import com.codecool.dungeoncrawl.logic.actors.opponents.Skeleton;
 import com.codecool.dungeoncrawl.logic.cells.CellType;
 import org.junit.jupiter.api.Test;
 

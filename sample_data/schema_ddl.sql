@@ -1,19 +1,37 @@
-DROP TABLE IF EXISTS public.game_state;
-CREATE TABLE public.game_state (
+DROP TABLE IF EXISTS public.opponents;
+CREATE TABLE public.opponents (
     id serial NOT NULL PRIMARY KEY,
-    current_map text NOT NULL,
-    saved_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    player_id integer NOT NULL
-);
-
-DROP TABLE IF EXISTS public.player;
-CREATE TABLE public.player (
-    id serial NOT NULL PRIMARY KEY,
-    player_name text NOT NULL,
-    hp integer NOT NULL,
+    player_id integer NOT NULL,
+    start_x integer NOT NULL,
+    start_y integer NOT NULL,
+    map_name text NOT NULL,
+    actor_name text NOT NULL,
     x integer NOT NULL,
     y integer NOT NULL
 );
 
-ALTER TABLE ONLY public.game_state
-    ADD CONSTRAINT fk_player_id FOREIGN KEY (player_id) REFERENCES public.player(id);
+
+DROP TABLE IF EXISTS public.items;
+CREATE TABLE public.items (
+    id serial NOT NULL PRIMARY KEY,
+    player_id integer NOT NULL,
+    map_name text NOT NULL,
+    item_name text NOT NULL,
+    x integer NOT NULL,
+    y integer NOT NULL
+);
+
+
+DROP TABLE IF EXISTS public.game_state;
+CREATE TABLE public.game_state (
+    id serial NOT NULL PRIMARY KEY,
+    player_name text NOT NULL,
+    hp integer NOT NULL,
+    armor integer NOT NULL,
+    strength integer NOT NULL,
+    score integer NOT NULL,
+    map_name text NOT NULL,
+    x integer NOT NULL,
+    y integer NOT NULL,
+    save_name text NOT NULL
+);

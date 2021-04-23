@@ -1,8 +1,9 @@
-package com.codecool.dungeoncrawl;
+package com.codecool.dungeoncrawl.logic.actors;
 
 import com.codecool.dungeoncrawl.logic.cells.Cell;
 import com.codecool.dungeoncrawl.logic.actors.Actor;
 import com.codecool.dungeoncrawl.logic.cells.CellType;
+import com.codecool.dungeoncrawl.logic.items.Inventory;
 import com.codecool.dungeoncrawl.logic.items.OpenedDoors;
 
 

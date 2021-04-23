@@ -1,16 +1,19 @@
 package com.codecool.dungeoncrawl;
 
-import com.codecool.dungeoncrawl.dao.GameDatabaseManager;
-import com.codecool.dungeoncrawl.logic.actors.Actor;
-import com.codecool.dungeoncrawl.logic.cells.Cell;
+import com.codecool.dungeoncrawl.dao.jdbc.GameDatabaseManager;
+import com.codecool.dungeoncrawl.dao.json.SerializationMenager;
 import com.codecool.dungeoncrawl.logic.GameMap;
 import com.codecool.dungeoncrawl.logic.MapLoader;
+import com.codecool.dungeoncrawl.logic.Tiles;
+import com.codecool.dungeoncrawl.logic.actors.Actor;
 import com.codecool.dungeoncrawl.logic.actors.Player;
-import com.codecool.dungeoncrawl.logic.cells.CellType;
+import com.codecool.dungeoncrawl.logic.actors.opponents.Opponents;
+import com.codecool.dungeoncrawl.logic.cells.Cell;
 import com.codecool.dungeoncrawl.logic.items.Item;
+import com.codecool.dungeoncrawl.model.GameStateModel;
 import com.codecool.dungeoncrawl.view.RightMenu;
+import com.codecool.dungeoncrawl.view.SavePopUp;
 import javafx.application.Application;
-import javafx.application.Platform;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -33,13 +36,16 @@ public class Main extends Application {
     private Player player;
     private Stage stage;
     private GameDatabaseManager dbManager;
+    private SerializationMenager serializationMenager;
     private RightMenu rightMenu;
     private int sizeOfGameWindow = 10;
     private int offset = sizeOfGameWindow / 2;
-    static String mapName = "1";
-    static String previousMapName = "1";
+    static String defaultMap = "1";
+    static String mapName = defaultMap;
+    static String previousMapName = defaultMap;
 
     public static void main(String[] args) {
+
         launch(args);
     }
 
@@ -49,8 +55,8 @@ public class Main extends Application {
         this.stage = primaryStage;
         setMap(mapName, player);
         MapLoader.updatePlayerOpponents(player);
-        rightMenu = new RightMenu(player);
-
+        this.serializationMenager = new SerializationMenager(player);
+        this.rightMenu = new RightMenu(player, serializationMenager, this);
         BorderPane borderPane = new BorderPane();
         borderPane.setCenter(canvas);
         borderPane.setRight(rightMenu);
@@ -58,67 +64,77 @@ public class Main extends Application {
         primaryStage.setScene(scene);
         refresh();
         scene.setOnKeyPressed(this::onKeyPressed);
+        scene.setOnKeyReleased(this::onKeyReleased);
 
         primaryStage.setTitle("Dungeon Crawl");
         primaryStage.show();
     }
 
 
-    //tu dorobić control s do zapisywania
     private void onKeyReleased(KeyEvent keyEvent) {
         KeyCombination exitCombinationMac = new KeyCodeCombination(KeyCode.W, KeyCombination.SHORTCUT_DOWN);
         KeyCombination exitCombinationWin = new KeyCodeCombination(KeyCode.F4, KeyCombination.ALT_DOWN);
+        KeyCombination saveCombination = new KeyCodeCombination(KeyCode.S, KeyCombination.CONTROL_DOWN);
+
         if (exitCombinationMac.match(keyEvent)
                 || exitCombinationWin.match(keyEvent)
                 || keyEvent.getCode() == KeyCode.ESCAPE) {
             exit();
         }
+        if(saveCombination.match(keyEvent)){
+            SavePopUp savePopUp = new SavePopUp(player, dbManager);
+            savePopUp.show();
+            int idOfPlayerToLoad = savePopUp.getIdOfPlayerToLoad();
+            if(idOfPlayerToLoad != -1){
+                preparingGameStateFromDBToLoad(idOfPlayerToLoad);
+            }
+        }
+
     }
 
 
     private void onKeyPressed(KeyEvent keyEvent) {
-        Opponents.opponentsMove();
         switch (keyEvent.getCode()) {
+            case W:
             case UP:
                 map.getPlayer().move(0, -1);
                 refresh();
                 break;
+            case S:
             case DOWN:
                 map.getPlayer().move(0, 1);
                 refresh();
                 break;
+            case A:
             case LEFT:
                 map.getPlayer().move(-1, 0);
                 refresh();
                 break;
+            case D:
             case RIGHT:
                 map.getPlayer().move(1, 0);
                 refresh();
-                break;
-            case S:
-                Player player = map.getPlayer();
-                dbManager.savePlayer(player);
                 break;
         }
     }
 
 
     public void refresh() {
-        if (!player.getMapNumber().equals(previousMapName)) {
-            previousMapName = mapName;
-            mapName = player.getMapNumber();
+        mapChanger();
+        Opponents.opponentsMove();
+        playerHealthChecker();
+        showMap();
+        rightMenu.updatePlayerStats();
+    }
 
-            try {
-                start(this.stage);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-//        prymitywny koniec gry gdy życie gracza bedzie wynosiło 0
+    private void playerHealthChecker(){
         if (player.getHealth() < 1) {
-            Platform.exit();
+            this.exit();
         }
+    }
 
+
+    private void showMap(){
         context.setFill(Color.BLACK);
         context.fillRect(0, 0, canvas.getWidth(), canvas.getHeight());
 
@@ -141,8 +157,8 @@ public class Main extends Application {
                 }
             }
         }
-        rightMenu.updatePlayerStats();
     }
+
 
     private int getStartPosition(int playerPosition) {
         if (playerPosition - offset < 0) {
@@ -167,7 +183,6 @@ public class Main extends Application {
                 sizeOfGameWindow * Tiles.TILE_WIDTH,
                 sizeOfGameWindow * Tiles.TILE_WIDTH);
         this.context = canvas.getGraphicsContext2D();
-
     }
 
 
@@ -179,6 +194,48 @@ public class Main extends Application {
         } catch (SQLException ex) {
             System.out.println("Cannot connect to database.");
         }
+    }
+
+
+    private void mapChanger(){
+        if (!player.getMapNumber().equals(previousMapName)) {
+            mapName = player.getMapNumber();
+            previousMapName = mapName;
+
+            try {
+                start(this.stage);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private void preparingGameStateFromDBToLoad(int id){
+        dbManager.loadState(player, id);
+
+        ArrayList<Item> items = dbManager.getItemsModel().getItems();
+        ArrayList<Actor> opponents = dbManager.getOpponentsModel().getDiedOpponents();
+        GameStateModel gameStateModel = dbManager.getPlayerModel();
+        loadSavedGame(items, opponents, gameStateModel);
+    }
+
+
+    public void loadSavedGame(ArrayList<Item> items, ArrayList<Actor> opponents, GameStateModel gameStateModel ){
+        player.setPlayerName(gameStateModel.getPlayerName());
+        player.setHealth(gameStateModel.getHp());
+        player.setArmor(gameStateModel.getArmor());
+        player.setStrength(gameStateModel.getStrength());
+        player.setScore(gameStateModel.getScore());
+        player.setMapNumber(gameStateModel.getMapName());
+        player.getInventory().setItems(items);
+        Opponents.setDiedOpponents(opponents);
+
+        setMap(player.getMapNumber(), player);
+
+        previousMapName = "XD";
+        mapChanger();
+        player.setPosition(gameStateModel.getX(), gameStateModel.getY());
+        refresh();
     }
 
     private void exit() {

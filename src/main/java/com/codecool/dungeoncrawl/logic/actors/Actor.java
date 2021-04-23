@@ -1,6 +1,5 @@
 package com.codecool.dungeoncrawl.logic.actors;
 
-import com.codecool.dungeoncrawl.Movement;
 import com.codecool.dungeoncrawl.logic.cells.Cell;
 import com.codecool.dungeoncrawl.logic.Drawable;
 
@@ -24,6 +23,7 @@ public abstract class Actor implements Drawable {
         this.mapNumber = mapNumber;
     }
 
+
     public void move(int dx, int dy) {
         Cell nextCell = cell.getNeighbor(dx, dy);
         if(movement.movementValidator(nextCell, cell)) {
@@ -41,7 +41,7 @@ public abstract class Actor implements Drawable {
         cell = nextCell;
     }
 
-    public void setStrength(int strength) { this.strength += strength; }
+    public void updateStrength(int strength) { this.strength += strength; }
 
     public int getStrength() { return strength; }
 
@@ -70,4 +70,8 @@ public abstract class Actor implements Drawable {
     public int getStartY() { return startY; }
 
     public void setStartY(int startY) { this.startY = startY; }
+
+    public void setHealth(int health) { this.health = health; }
+
+    public void setStrength(int strength) { this.strength = strength; }
 }

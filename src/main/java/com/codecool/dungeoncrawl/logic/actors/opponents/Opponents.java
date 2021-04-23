@@ -1,4 +1,4 @@
-package com.codecool.dungeoncrawl;
+package com.codecool.dungeoncrawl.logic.actors.opponents;
 
 import com.codecool.dungeoncrawl.logic.cells.Cell;
 import com.codecool.dungeoncrawl.logic.cells.CellType;
@@ -94,5 +94,5 @@ public class Opponents {
         System.out.println(num);
     }
 
-
+    public static void setDiedOpponents(ArrayList<Actor> diedOpponents) { Opponents.diedOpponents = diedOpponents; }
 }

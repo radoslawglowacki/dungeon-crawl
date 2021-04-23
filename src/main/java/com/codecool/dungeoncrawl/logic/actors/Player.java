@@ -1,7 +1,7 @@
 package com.codecool.dungeoncrawl.logic.actors;
 
-import com.codecool.dungeoncrawl.Inventory;
-import com.codecool.dungeoncrawl.Opponents;
+import com.codecool.dungeoncrawl.logic.items.Inventory;
+import com.codecool.dungeoncrawl.logic.actors.opponents.Opponents;
 import com.codecool.dungeoncrawl.logic.cells.Cell;
 
 import java.util.ArrayList;
@@ -18,6 +18,15 @@ public class Player extends Actor {
         this.inventory = new Inventory(this);
         this.score = 0;
         this.armor = 0;
+
+    }
+
+    public Player(Cell cell, int health, int strength, String mapNumber, int score, int armor, String playerName){
+        super(cell,health,strength,0,mapNumber);
+        this.inventory = new Inventory(this);
+        this.score = score;
+        this.armor = armor;
+        this.playerName = playerName;
 
     }
 
@@ -47,6 +56,8 @@ public class Player extends Actor {
 
     public void updateScore(int score) { this.score += score; }
 
+    public void setInventory(Inventory inventory) { this.inventory = inventory; }
+
     public Inventory getInventory() { return inventory; }
 
     public String getPlayerName() { return playerName; }
@@ -61,5 +72,7 @@ public class Player extends Actor {
 
     public ArrayList<Actor> getActualOpponents() { return opponents.getActualOpponents(); }
 
+    public void setScore(int score) { this.score = score; }
 
+    public void setArmor(int armor) { this.armor = armor; }
 }

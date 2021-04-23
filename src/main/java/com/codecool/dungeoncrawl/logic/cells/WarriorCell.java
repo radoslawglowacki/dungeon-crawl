@@ -2,8 +2,7 @@ package com.codecool.dungeoncrawl.logic.cells;
 
 import com.codecool.dungeoncrawl.logic.GameMap;
 import com.codecool.dungeoncrawl.logic.actors.Actor;
-import com.codecool.dungeoncrawl.logic.actors.Skeleton;
-import com.codecool.dungeoncrawl.logic.actors.Warrior;
+import com.codecool.dungeoncrawl.logic.actors.opponents.Warrior;
 
 public class WarriorCell extends Cell {
 

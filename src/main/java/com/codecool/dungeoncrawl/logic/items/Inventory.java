@@ -1,4 +1,4 @@
-package com.codecool.dungeoncrawl;
+package com.codecool.dungeoncrawl.logic.items;
 
 import com.codecool.dungeoncrawl.logic.cells.CellType;
 import com.codecool.dungeoncrawl.logic.actors.Player;
@@ -33,9 +33,8 @@ public class Inventory {
             if(item.getTileName().equals("key")){
                 keys.add(item);
             } else if(item.getTileName().equals("blade")){
-                player.setStrength(5);
+                player.updateStrength(5);
             }
-            System.out.println(item.getTileName());
             updateInventory(player, item);
             item.getCell().setType(CellType.FLOOR);
         }
@@ -43,9 +42,7 @@ public class Inventory {
 
     public ArrayList<Item> getItems() { return items; }
 
-    public int getItemsCount() {
-        return items.size();
-    }
+    public void setItems(ArrayList<Item> items) { this.items = items; }
 
     public int getKeys() { return keys.size(); }
 
